@@ -12,8 +12,11 @@ H_SAVE   = 60.0     # koer kun hvis strommen er billig
 H_OFF    = 45.0     # tort nok: stop
 
 # --- Kompressorbeskyttelse (sekunder) ---
-MIN_OFF = 15 * 60
-MIN_ON  = 10 * 60
+# MIN_OFF = 15 * 60
+# MIN_ON  = 10 * 60
+
+MIN_OFF = 60      # TESTING: 1 minute
+MIN_ON  = 60      # TESTING: 1 minute
 
 # --- IF4: stilletid ---
 QUIET_FROM = 0      # kl. 00
