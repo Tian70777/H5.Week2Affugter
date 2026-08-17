@@ -1,7 +1,7 @@
 """Shelly Gen3 via RPC. Kender intet til fugt eller priser."""
 import requests
 
-SHELLY_IP = "192.168.0.209"
+from app.config import SHELLY_IP   # læses fra .env
 TIMEOUT = 5
 
 

@@ -12,7 +12,7 @@ from app.logic import decide
 from app.prices import price_is_cheap
 from app.sources import current_humidity
 
-DRY_RUN = True          # TRIN 4: log kun, roer ikke stikket
+from app.config import DRY_RUN   # læses nu fra .env, ikke hardcodet
 TICK = 60               # sekunder mellem beslutninger
 
 
