@@ -5,7 +5,7 @@ modtageren har baade hukommelse og en JSON-parser.
 import datetime as dt
 
 from fastapi import APIRouter, HTTPException
-
+from app.adapters import shelly
 from app.database import db, dict_cursor, local_now
 from app.prices import fetch_and_store
 
@@ -82,6 +82,24 @@ def history(hours: int = 24):
             (hours,))
         rows = cur.fetchall()
     return {"hours": hours, "count": len(rows), "readings": rows}
+
+
+@router.get("/plug")
+def plug():
+    """Live tilstand paa stikket. Spoerger Shelly direkte (ikke databasen)."""
+    on, watt = shelly.get_status()
+    return {"on": on, "watt": watt, "reachable": on is not None}
+
+
+@router.get("/switches")
+def switches(limit: int = 20):
+    """De sidste skift af stikket - 'dagbogen'. Til tabellen i dashboardet."""
+    with dict_cursor() as cur:
+        cur.execute(
+            "SELECT ts, turned_on, reason, humidity, price FROM switches "
+            "ORDER BY ts DESC LIMIT %s", (limit,))
+        rows = cur.fetchall()
+    return {"count": len(rows), "switches": rows}
 
 
 @router.get("/health")

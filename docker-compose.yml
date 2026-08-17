@@ -58,6 +58,7 @@ services:
     environment:
       DB_HOST: db
       DB_PASS: ${DB_PASS}
+      SHELLY_IP: ${SHELLY_IP} 
     ports:
       - "8000:8000"
 
