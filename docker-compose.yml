@@ -1,0 +1,66 @@
+services:
+
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: affugter
+      POSTGRES_USER: affugter
+      POSTGRES_PASSWORD: ${DB_PASS}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./schema.sql:/docker-entrypoint-initdb.d/schema.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U affugter"]
+      interval: 10s
+      retries: 5   
+
+  mosquitto:
+    image: eclipse-mosquitto:2
+    restart: unless-stopped
+    volumes:
+      - ./mosquitto/config:/mosquitto/config
+      - mosquitto_data:/mosquitto/data
+    ports:
+      - "1883:1883"   
+
+  zigbee2mqtt:
+    image: koenkk/zigbee2mqtt
+    restart: unless-stopped
+    depends_on: [mosquitto]
+    volumes:
+      - ./z2m-data:/app/data
+      - /run/udev:/run/udev:ro
+    devices:
+      - ${DONGLE}:/dev/ttyUSB0
+    ports:
+      - "8080:8080"
+
+  controller:
+    build: .
+    restart: unless-stopped
+    depends_on:
+      db: {condition: service_healthy}
+      mosquitto: {condition: service_started}
+    environment:
+      DB_HOST: db
+      DB_PASS: ${DB_PASS}
+      MQTT_HOST: mosquitto
+      SHELLY_IP: ${SHELLY_IP}
+      DRY_RUN: ${DRY_RUN}
+
+  api:
+    build: .
+    restart: unless-stopped
+    command: uvicorn main:app --host 0.0.0.0 --port 8000
+    depends_on:
+      db: {condition: service_healthy}
+    environment:
+      DB_HOST: db
+      DB_PASS: ${DB_PASS}
+    ports:
+      - "8000:8000"
+
+volumes:
+  pgdata:
+  mosquitto_data:

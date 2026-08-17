@@ -1,0 +1,10 @@
+.env
+.env.local
+z2m-data/
+mosquitto/config/
+__pycache__/
+*.pyc
+venv/
+*.db
+.vscode/
+.DS_Store
