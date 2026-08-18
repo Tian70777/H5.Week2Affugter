@@ -62,7 +62,11 @@ def status():
     stale = None
     if latest:
         age = (dt.datetime.now(dt.timezone.utc) - latest["ts"]).total_seconds()
-        stale = age > 120        # Arduinoen sender hvert 30. sekund
+        if latest["source"] == "zigbee":
+            limit = 1800     # 30 min - zigbee-sensoren holder pauser
+        else:
+            limit = 120      # 2 min - arduino sender hvert 30. sek
+        stale = age > limit
 
     return {
         "latest": latest,

@@ -160,5 +160,3 @@ CREATE INDEX readings_ts_idx ON public.readings USING btree (ts DESC);
 -- PostgreSQL database dump complete
 --
 
-\unrestrict ioeweepcas5cxMhemXRW3SgkklZSeWl2O26V4ggA5L1mprlgJVaq1wsEkSoIa9N
-
